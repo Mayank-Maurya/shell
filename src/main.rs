@@ -40,7 +40,7 @@ fn type_command(args: Vec<&str>, commands: &[&str]) {
     if commands.contains(&args[1]) {
         println!("{} is a shell builtin",args[1..].join(" "));
     } else {
-        not_found_err(args, 1);
+        println!("{}: not found ",args[1..].join(" "));
     }
 }
 
