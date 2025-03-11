@@ -1,10 +1,14 @@
+use std::{env, fs};
 #[allow(unused_imports)]
 use std::io::{self, Write};
 
 fn main() {
     let stdin = io::stdin();
     let mut input;
-    let commands= ["echo", "type", "exit"];
+    // let commands= ["echo", "type", "exit"];
+    let args: Vec<String> = env::args().collect();
+    let path_vec: Vec<&str> = args[1].split("=").collect();
+    let paths: Vec<&str> = path_vec[1].split(":").collect();
     loop {
         // initiate terminal
         print!("$ ");
@@ -15,47 +19,70 @@ fn main() {
         stdin.read_line(&mut input).unwrap();
 
         // collect all args with command at args[0]
-        let args: Vec<&str> = input.split_whitespace().collect();
+        let commands: Vec<&str> = input.split_whitespace().collect();
         
         // check if there any command
-        if args.len() == 0 {
+        if commands.len() == 0 {
             continue;
         }
 
         // check for type of commands
-        match args[0].trim() {
-            "echo" => echo_command(args),
-            "type" => type_command(args, &commands),
+        match commands[0].trim() {
+            "echo" => echo_command(commands),
+            "type" => type_command(commands, &paths),
             "exit" => {
-                if exit_command(args) {
+                if exit_command(commands) {
                     break;
                 }
             },
-            _ => not_found_err(args,0),
+            _ => not_found_err(commands,0),
         }
     }
 }
 
-fn type_command(args: Vec<&str>, commands: &[&str]) {
-    if commands.contains(&args[1]) {
-        println!("{} is a shell builtin",args[1..].join(" "));
-    } else {
-        println!("{}: not found ",args[1..].join(" "));
+fn type_command(commands: Vec<&str>, paths: &[&str]) {
+    let mut isFound = false;
+    for path in paths {
+        if isFound {
+            break;
+        }
+        match fs::read_dir(path) {
+            Ok(entries) => {
+                for entry in entries {
+                    match entry {
+                        Ok(entry) => {
+                            if let Some(file_name) = entry.path().file_stem() {
+                                if file_name == commands[1] {
+                                    println!("{} is {}/{}", commands[1],path,file_name.to_string_lossy());
+                                    isFound = true;
+                                    break;
+                                }
+                            }
+                        }
+                        Err(e) => println!("{}", e),
+                    }
+                }
+            },
+            Err(e) => println!("{}", e),
+        }
+    }
+    if !isFound {
+        println!("{}: not found ", commands[1]);
     }
 }
 
-fn exit_command(args: Vec<&str>) -> bool {
-    if args.len() >=2 && args[1] == "0" {
+fn exit_command(commands: Vec<&str>) -> bool {
+    if commands.len() >=2 && commands[1] == "0" {
         return true
     }
-    not_found_err(args, 1);
+    not_found_err(commands, 1);
     false
 }
 
-fn echo_command(args: Vec<&str>) {
-    println!("{} ",args[1..].join(" "));
+fn echo_command(commands: Vec<&str>) {
+    println!("{} ",commands[1..].join(" "));
 }
 
-fn not_found_err(args: Vec<&str>, start_index: usize) {
-    println!("{}: command not found ",args[start_index..].join(" "));
+fn not_found_err(commands: Vec<&str>, start_index: usize) {
+    println!("{}: command not found ",commands[start_index..].join(" "));
 }
