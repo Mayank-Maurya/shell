@@ -80,8 +80,8 @@ fn type_command(commands: Vec<&str>) {
         }
     }
     if !is_found {
-        not_found_err(commands, 1);
-        // println!("{}: not found ", commands[1]);
+        // not_found_err(commands, 1);
+        println!("{}: not found ", commands[1]);
     }
 }
 
