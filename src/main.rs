@@ -128,9 +128,10 @@ fn execute_files_command(commands: Vec<&str>) {
 }
 
 fn async_execute_file(entry: DirEntry, commands: &[&str]) {
-    Command::new(entry.path())
+    let output = Command::new(entry.path())
         .args(commands.iter())
         .output();
+    io::stdout().write_all(&output.unwrap().stdout).unwrap();
 }
 fn exit_command(commands: Vec<&str>) -> bool {
     if commands.len() >=2 && commands[1] == "0" {
