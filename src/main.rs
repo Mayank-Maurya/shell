@@ -108,7 +108,7 @@ fn execute_files_command(commands: Vec<&str>) {
                         Ok(entry) => {
                             if let Some(file_name) = entry.path().file_stem() {
                                 if file_name == commands[0] {
-                                    println!("{} is {}/{}", commands[0],path,file_name.to_string_lossy());
+                                    // println!("{} is {}/{}", commands[0],path,file_name.to_string_lossy());
                                     Command::new(entry.path())
                                         .args(commands.iter())
                                         .spawn();
