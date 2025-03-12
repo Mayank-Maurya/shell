@@ -48,6 +48,10 @@ fn main() {
 }
 
 fn type_command(commands: Vec<&str>, paths: &[&str]) {
+    if commands[1] == "echo" {
+        println!("echo is a shell builtin");
+        return;
+    }
     let mut is_found: bool = false;
     for path in paths {
         if is_found {
