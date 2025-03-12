@@ -5,6 +5,10 @@ use std::io::{self, Write};
 fn main() {
     let stdin = io::stdin();
     let mut input;
+    match env::var("PATH") {
+        Ok(path) => println!("PATH: {}", path),
+        Err(e) => println!("Couldn't read PATH: {}", e),
+    }
     let mut path_vec: Vec<&str> = [].to_vec();
     let mut paths: Vec<&str> = [].to_vec();
     // let commands= ["echo", "type", "exit"];
