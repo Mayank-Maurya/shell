@@ -129,7 +129,7 @@ fn execute_files_command(commands: Vec<&str>) {
 
 fn async_execute_file(entry: DirEntry, commands: &[&str]) {
     let output = Command::new(entry.path())
-        .args(commands.iter())
+        .args(commands[1..].iter())
         .output();
     io::stdout().write_all(&output.unwrap().stdout).unwrap();
 }
