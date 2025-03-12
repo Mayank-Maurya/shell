@@ -1,7 +1,7 @@
 use std::{env, fs::{self}};
 use std::io::{self, Write};
 use std::process::Command;
-const built_in_commands: [&str; 4] = ["echo", "exit", "type", "pwd"];
+const BUILT_IN_COMMANDS: [&str; 4] = ["echo", "exit", "type", "pwd"];
 fn main() {
     // define vars
     let stdin = io::stdin();
@@ -28,6 +28,7 @@ fn main() {
             "echo" => echo_command(commands),
             "type" => type_command(commands),
             "pwd" => pwd_command(commands),
+            "cd" => change_directory_command(commands),
             "exit" => {
                 if exit_command(commands) {
                     break;
@@ -49,7 +50,7 @@ fn type_command(commands: Vec<&str>) {
         },
         Err(e) => println!("Couldn't read PATH: {}", e),
     }
-    if built_in_commands.contains(&&commands[1])  {
+    if BUILT_IN_COMMANDS.contains(&&commands[1])  {
         println!("{} is a shell builtin", commands[1]);
         return;
     }
@@ -145,6 +146,13 @@ fn pwd_command(commands: Vec<&str>) {
     match env::current_dir() {
         Ok(path) => println!("{}", path.display()),
         Err(e) => println!("{}", e),
+    }
+}
+
+fn change_directory_command(commands: Vec<&str>) {
+    match env::set_current_dir(commands[1]) {
+        Ok(_) => {},
+        Err(_) => println!("cd: {}: No such file or directory", commands[1]),
     }
 }
 
