@@ -1,4 +1,4 @@
-use std::{env, fs};
+use std::{env, fs, os::unix::process::CommandExt};
 #[allow(unused_imports)]
 use std::io::{self, Write};
 use std::process::Command;
@@ -110,7 +110,7 @@ fn execute_files_command(commands: Vec<&str>) {
                                 if file_name == commands[0] {
                                     // println!("{} is {}/{}", commands[1],path,file_name.to_string_lossy());
                                     Command::new(entry.path())
-                                        .args(commands[1..].iter());
+                                        .args(commands.iter());
                                     // println!("{:?}", comnd.unwrap().stdout);
                                     is_found = true;
                                     break;
