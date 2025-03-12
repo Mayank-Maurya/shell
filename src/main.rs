@@ -1,7 +1,7 @@
 use std::{env, fs};
 #[allow(unused_imports)]
 use std::io::{self, Write};
-
+const built_in_commands: [&str; 3] = ["echo", "exit", "type"];
 fn main() {
     // define vars
     let stdin = io::stdin();
@@ -48,7 +48,7 @@ fn main() {
 }
 
 fn type_command(commands: Vec<&str>, paths: &[&str]) {
-    if commands[1] == "echo" {
+    if built_in_commands.contains(&&commands[1])  {
         println!("echo is a shell builtin");
         return;
     }
