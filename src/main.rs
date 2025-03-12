@@ -122,7 +122,7 @@ fn execute_files_command(commands: Vec<&str>) {
         }
     }
     if !is_found {
-        not_found_err(commands, 1);
+        not_found_err(commands, 0);
         // println!("{}: not found ", commands[1]);
     }
 }
