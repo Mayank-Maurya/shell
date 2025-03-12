@@ -150,6 +150,18 @@ fn pwd_command(commands: Vec<&str>) {
 }
 
 fn change_directory_command(commands: Vec<&str>) {
+    if commands[1] == "~" {
+        match env::var("HOME") {
+            Ok(path) => {
+                match env::set_current_dir(path) {
+                    Ok(_) => {},
+                    Err(_) => {},
+                }
+            },
+            Err(e) => println!("Couldn't read PATH: {}", e),
+        }
+        return;
+    }
     match env::set_current_dir(commands[1]) {
         Ok(_) => {},
         Err(_) => println!("cd: {}: No such file or directory", commands[1]),
