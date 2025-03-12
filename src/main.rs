@@ -1,8 +1,6 @@
-use std::{env, fs::{self, DirEntry}, os::unix::process::CommandExt};
-#[allow(unused_imports)]
+use std::{env, fs::{self}};
 use std::io::{self, Write};
 use std::process::Command;
-
 const built_in_commands: [&str; 3] = ["echo", "exit", "type"];
 fn main() {
     // define vars
@@ -29,6 +27,7 @@ fn main() {
         match commands[0].trim() {
             "echo" => echo_command(commands),
             "type" => type_command(commands),
+            "pwd" => pwd_command(commands),
             "exit" => {
                 if exit_command(commands) {
                     break;
@@ -133,12 +132,20 @@ fn async_execute_file(commands: &[&str]) {
         .output();
     io::stdout().write_all(&output.unwrap().stdout).unwrap();
 }
+
 fn exit_command(commands: Vec<&str>) -> bool {
     if commands.len() >=2 && commands[1] == "0" {
         return true
     }
     not_found_err(commands, 1);
     false
+}
+
+fn pwd_command(commands: Vec<&str>) {
+    match env::current_dir() {
+        Ok(path) => println!("{}", path.display()),
+        Err(e) => println!("{}", e),
+    }
 }
 
 fn echo_command(commands: Vec<&str>) {
