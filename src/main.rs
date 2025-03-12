@@ -3,25 +3,19 @@ use std::{env, fs};
 use std::io::{self, Write};
 
 fn main() {
+    // define vars
     let stdin = io::stdin();
     let mut input;
+    let mut paths: Vec<&str> = [].to_vec();
+    let p: String;
+    // Get PATH from env vars
     match env::var("PATH") {
-        Ok(path) => println!("PATH: {}", path),
+        Ok(path) => {
+            p = path.clone();
+            paths = p.split(":").collect();
+        },
         Err(e) => println!("Couldn't read PATH: {}", e),
     }
-    let mut path_vec: Vec<&str> = [].to_vec();
-    let mut paths: Vec<&str> = [].to_vec();
-    // let commands= ["echo", "type", "exit"];
-    let args: Vec<String> = env::args().collect();
-    if args.len() > 1 {
-        path_vec = args[1].split("=").collect();
-        if path_vec.len() > 1 {
-            paths = path_vec[1].split(":").collect();
-        }
-    }
-    println!("{}",args.join(" "));
-    println!("{}",path_vec.join(" "));
-    println!("{}",paths.join(" "));
     loop {
         // initiate terminal
         print!("$ ");
@@ -54,9 +48,9 @@ fn main() {
 }
 
 fn type_command(commands: Vec<&str>, paths: &[&str]) {
-    let mut isFound = false;
+    let mut is_found: bool = false;
     for path in paths {
-        if isFound {
+        if is_found {
             break;
         }
         match fs::read_dir(path) {
@@ -67,19 +61,19 @@ fn type_command(commands: Vec<&str>, paths: &[&str]) {
                             if let Some(file_name) = entry.path().file_stem() {
                                 if file_name == commands[1] {
                                     println!("{} is {}/{}", commands[1],path,file_name.to_string_lossy());
-                                    isFound = true;
+                                    is_found = true;
                                     break;
                                 }
                             }
                         }
-                        Err(e) => println!("{}", e),
+                        Err(e) => {},
                     }
                 }
             },
-            Err(e) => println!("{}", e),
+            Err(e) => {},
         }
     }
-    if !isFound {
+    if !is_found {
         println!("{}: not found ", commands[1]);
     }
 }
