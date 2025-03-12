@@ -1,21 +1,13 @@
 use std::{env, fs};
 #[allow(unused_imports)]
 use std::io::{self, Write};
+use std::process::Command;
+
 const built_in_commands: [&str; 3] = ["echo", "exit", "type"];
 fn main() {
     // define vars
     let stdin = io::stdin();
     let mut input;
-    let mut paths: Vec<&str> = [].to_vec();
-    let p: String;
-    // Get PATH from env vars
-    match env::var("PATH") {
-        Ok(path) => {
-            p = path.clone();
-            paths = p.split(":").collect();
-        },
-        Err(e) => println!("Couldn't read PATH: {}", e),
-    }
     loop {
         // initiate terminal
         print!("$ ");
@@ -36,18 +28,28 @@ fn main() {
         // check for type of commands
         match commands[0].trim() {
             "echo" => echo_command(commands),
-            "type" => type_command(commands, &paths),
+            "type" => type_command(commands),
             "exit" => {
                 if exit_command(commands) {
                     break;
                 }
             },
-            _ => not_found_err(commands,0),
+            _ => execute_files_command(commands),
         }
     }
 }
 
-fn type_command(commands: Vec<&str>, paths: &[&str]) {
+fn type_command(commands: Vec<&str>) {
+    let mut paths: Vec<&str> = [].to_vec();
+    let p: String;
+    // Get PATH from env vars
+    match env::var("PATH") {
+        Ok(path) => {
+            p = path.clone();
+            paths = p.split(":").collect();
+        },
+        Err(e) => println!("Couldn't read PATH: {}", e),
+    }
     if built_in_commands.contains(&&commands[1])  {
         println!("{} is a shell builtin", commands[1]);
         return;
@@ -78,7 +80,54 @@ fn type_command(commands: Vec<&str>, paths: &[&str]) {
         }
     }
     if !is_found {
-        println!("{}: not found ", commands[1]);
+        not_found_err(commands, 1);
+        // println!("{}: not found ", commands[1]);
+    }
+}
+
+fn execute_files_command(commands: Vec<&str>) {
+    let mut paths: Vec<&str> = [].to_vec();
+    let p: String;
+    // Get PATH from env vars
+    match env::var("PATH") {
+        Ok(path) => {
+            p = path.clone();
+            paths = p.split(":").collect();
+        },
+        Err(e) => println!("Couldn't read PATH: {}", e),
+    }
+    let mut is_found: bool = false;
+    for path in paths {
+        if is_found {
+            break;
+        }
+        match fs::read_dir(path) {
+            Ok(entries) => {
+                for entry in entries {
+                    match entry {
+                        Ok(entry) => {
+                            if let Some(file_name) = entry.path().file_stem() {
+                                if file_name == commands[0] {
+                                    // println!("{} is {}/{}", commands[1],path,file_name.to_string_lossy());
+                                    let comnd = Command::new(entry.path())
+                                        .args(commands[1..].iter())
+                                        .output();
+                                    println!("{:?}", comnd.unwrap().stdout);
+                                    is_found = true;
+                                    break;
+                                }
+                            }
+                        }
+                        Err(e) => {},
+                    }
+                }
+            },
+            Err(e) => {},
+        }
+    }
+    if !is_found {
+        not_found_err(commands, 1);
+        // println!("{}: not found ", commands[1]);
     }
 }
 
