@@ -109,10 +109,9 @@ fn execute_files_command(commands: Vec<&str>) {
                             if let Some(file_name) = entry.path().file_stem() {
                                 if file_name == commands[0] {
                                     // println!("{} is {}/{}", commands[1],path,file_name.to_string_lossy());
-                                    let comnd = Command::new(entry.path())
-                                        .args(commands[1..].iter())
-                                        .output();
-                                    println!("{:?}", comnd.unwrap().stdout);
+                                    Command::new(entry.path())
+                                        .args(commands[1..].iter());
+                                    // println!("{:?}", comnd.unwrap().stdout);
                                     is_found = true;
                                     break;
                                 }
