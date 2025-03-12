@@ -85,7 +85,7 @@ fn type_command(commands: Vec<&str>) {
     }
 }
 
-async fn execute_files_command(commands: Vec<&str>) {
+fn execute_files_command(commands: Vec<&str>) {
     let mut paths: Vec<&str> = [].to_vec();
     let p: String;
     // Get PATH from env vars
