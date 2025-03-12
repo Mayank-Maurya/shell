@@ -5,7 +5,7 @@ use std::io::{self, Write};
 fn main() {
     let stdin = io::stdin();
     let mut input;
-    let path_vec: Vec<&str>;
+    let mut path_vec: Vec<&str> = [].to_vec();
     let mut paths: Vec<&str> = [].to_vec();
     // let commands= ["echo", "type", "exit"];
     let args: Vec<String> = env::args().collect();
@@ -15,6 +15,9 @@ fn main() {
             paths = path_vec[1].split(":").collect();
         }
     }
+    println!("{}",args.join(" "));
+    println!("{}",path_vec.join(" "));
+    println!("{}",paths.join(" "));
     loop {
         // initiate terminal
         print!("$ ");
