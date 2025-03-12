@@ -1,7 +1,7 @@
 use std::{env, fs::{self}};
 use std::io::{self, Write};
 use std::process::Command;
-const built_in_commands: [&str; 3] = ["echo", "exit", "type"];
+const built_in_commands: [&str; 4] = ["echo", "exit", "type", "pwd"];
 fn main() {
     // define vars
     let stdin = io::stdin();
