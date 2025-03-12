@@ -5,10 +5,16 @@ use std::io::{self, Write};
 fn main() {
     let stdin = io::stdin();
     let mut input;
+    let path_vec: Vec<&str>;
+    let mut paths: Vec<&str> = [].to_vec();
     // let commands= ["echo", "type", "exit"];
     let args: Vec<String> = env::args().collect();
-    let path_vec: Vec<&str> = args[1].split("=").collect();
-    let paths: Vec<&str> = path_vec[1].split(":").collect();
+    if args.len() > 1 {
+        path_vec = args[1].split("=").collect();
+        if path_vec.len() > 1 {
+            paths = path_vec[1].split(":").collect();
+        }
+    }
     loop {
         // initiate terminal
         print!("$ ");
