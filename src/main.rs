@@ -1,4 +1,4 @@
-use std::{env, fs, os::unix::process::CommandExt};
+use std::{env, fs::{self, DirEntry}, os::unix::process::CommandExt};
 #[allow(unused_imports)]
 use std::io::{self, Write};
 use std::process::Command;
@@ -85,7 +85,7 @@ fn type_command(commands: Vec<&str>) {
     }
 }
 
-fn execute_files_command(commands: Vec<&str>) {
+async fn execute_files_command(commands: Vec<&str>) {
     let mut paths: Vec<&str> = [].to_vec();
     let p: String;
     // Get PATH from env vars
@@ -108,11 +108,7 @@ fn execute_files_command(commands: Vec<&str>) {
                         Ok(entry) => {
                             if let Some(file_name) = entry.path().file_stem() {
                                 if file_name == commands[0] {
-                                    // println!("{} is {}/{}", commands[0],path,file_name.to_string_lossy());
-                                    Command::new(entry.path())
-                                        .args(commands.iter())
-                                        .spawn();
-                                    // println!("{:?}", comnd.unwrap().stdout);
+                                    async_execute_file(entry, &commands);
                                     is_found = true;
                                     break;
                                 }
@@ -131,6 +127,11 @@ fn execute_files_command(commands: Vec<&str>) {
     }
 }
 
+fn async_execute_file(entry: DirEntry, commands: &[&str]) {
+    Command::new(entry.path())
+        .args(commands.iter())
+        .output();
+}
 fn exit_command(commands: Vec<&str>) -> bool {
     if commands.len() >=2 && commands[1] == "0" {
         return true
