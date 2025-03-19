@@ -191,7 +191,15 @@ fn change_directory_command(commands: Vec<&str>) {
 }
 
 fn echo_command(input: &str) {
-    println!("{}",input[1..input.len()-2].to_string());
+    // print!("{}", input.to_string());
+    if input[0..1].to_string() == "'" && input[input.len()-2..input.len()-1].to_string() == "'" {
+        println!("{}",input[1..input.len()-2].to_string());
+    } else {
+        print!("{}", input.to_string());
+    }
+    
+    // println!("{} ",commands[1..].join(" "));
+    // println!("{}",input[1..input.len()-2].to_string());
 }
 
 fn cat_command(input: &str) {
