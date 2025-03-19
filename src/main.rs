@@ -1,11 +1,14 @@
 use std::{env, fs::{self}};
 use std::io::{self, Write};
 use std::process::Command;
+
 const BUILT_IN_COMMANDS: [&str; 4] = ["echo", "exit", "type", "pwd"];
 fn main() {
     // define vars
     let stdin = io::stdin();
     let mut input;
+    let mut command;
+    let mut args;
     loop {
         // initiate terminal
         print!("$ ");
@@ -15,17 +18,30 @@ fn main() {
         input = String::new();
         stdin.read_line(&mut input).unwrap();
 
-        // collect all args with command at args[0]
-        let commands: Vec<&str> = input.split_whitespace().collect();
-        
-        // check if there any command
-        if commands.len() == 0 {
-            continue;
+        let split = input.split_once(" ");
+
+        match split {
+            Some(str) => {
+                command = str.0;
+                args = str.1;
+            },
+            None => {
+                panic!("An error occurred!");
+            }
         }
 
+        // // collect all args with command at args[0]
+        let commands: Vec<&str> = input.split_ascii_whitespace().collect();
+        
+        // // check if there any command
+        // if commands.len() == 0 {
+        //     continue;
+        // }
+
         // check for type of commands
-        match commands[0].trim() {
-            "echo" => echo_command(commands),
+        match command {
+            "echo" => echo_command(args),
+            "cat" => cat_command(args),
             "type" => type_command(commands),
             "pwd" => pwd_command(commands),
             "cd" => change_directory_command(commands),
@@ -108,7 +124,7 @@ fn execute_files_command(commands: Vec<&str>) {
                         Ok(entry) => {
                             if let Some(file_name) = entry.path().file_stem() {
                                 if file_name == commands[0] {
-                                    async_execute_file( &commands);
+                                    async_execute_file( &commands,"");
                                     is_found = true;
                                     break;
                                 }
@@ -127,8 +143,14 @@ fn execute_files_command(commands: Vec<&str>) {
     }
 }
 
-fn async_execute_file(commands: &[&str]) {
-    let output = Command::new(commands[0])
+fn async_execute_file(commands: &[&str], explicit_command: &str) {
+    let cmd;
+    if !explicit_command.is_empty() {
+        cmd = explicit_command;
+    } else {
+        cmd = commands[0];
+    }
+    let output = Command::new(cmd)
         .args(commands[1..].iter())
         .output();
     io::stdout().write_all(&output.unwrap().stdout).unwrap();
@@ -168,8 +190,13 @@ fn change_directory_command(commands: Vec<&str>) {
     }
 }
 
-fn echo_command(commands: Vec<&str>) {
-    println!("{} ",commands[1..].join(" "));
+fn echo_command(input: &str) {
+    print!("{}",input);
+}
+
+fn cat_command(input: &str) {
+    let file_names: Vec<&str> = input.split_ascii_whitespace().collect();
+    async_execute_file(&file_names, "cat");
 }
 
 fn not_found_err(commands: Vec<&str>, start_index: usize) {
