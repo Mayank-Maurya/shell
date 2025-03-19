@@ -195,6 +195,9 @@ fn echo_command(input: &str) {
     if input[0..1].to_string() == "'" {
         let ans: Vec<&str> = input.split("'").collect();
         println!("{}",ans[0..ans.len()-1].join(""));
+    } else if input[0..1].to_string() == "\"" { 
+        let ans: Vec<&str> = input.split("\"").collect();
+        println!("{}",ans[0..ans.len()-1].join(""));
     } else {
         let ans: Vec<&str> = input.split_whitespace().collect();
         println!("{}", ans.join(" "));
@@ -205,6 +208,8 @@ fn cat_command(input: &str) {
     let file_names: Vec<&str>;
     if input[0..1].to_string() == "'" {
         file_names = input.split("'").collect();
+    } else if input[0..1].to_string() == "\"" { 
+        file_names = input.split("\"").collect();
     } else {
         file_names = input.split_whitespace().collect();
     }
