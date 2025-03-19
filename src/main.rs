@@ -204,10 +204,8 @@ fn cat_command(input: &str) {
     let file_names: Vec<&str>;
     if input[0..1].to_string() == "'" {
         file_names = input.split("'").collect();
-        println!("{}",file_names[0..file_names.len()-1].join(""));
     } else {
         file_names = input.split_whitespace().collect();
-        println!("{}", file_names.join(" "));
     }
     async_execute_file(&file_names, "cat");
 }
