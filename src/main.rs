@@ -191,7 +191,6 @@ fn change_directory_command(commands: Vec<&str>) {
 }
 
 fn echo_command(input: &str) {
-    // print!("{}", input.to_string());
     if input[0..1].to_string() == "'" {
         let ans: Vec<&str> = input.split("'").collect();
         println!("{}",ans[0..ans.len()-1].join(""));
@@ -199,13 +198,17 @@ fn echo_command(input: &str) {
         let ans: Vec<&str> = input.split_whitespace().collect();
         println!("{}", ans.join(" "));
     }
-    
-    // println!("{} ",commands[1..].join(" "));
-    // println!("{}",input[1..input.len()-2].to_string());
 }
 
 fn cat_command(input: &str) {
-    let file_names: Vec<&str> = input.split_ascii_whitespace().collect();
+    let file_names: Vec<&str>;
+    if input[0..1].to_string() == "'" {
+        file_names = input.split("'").collect();
+        println!("{}",file_names[0..file_names.len()-1].join(""));
+    } else {
+        file_names = input.split_whitespace().collect();
+        println!("{}", file_names.join(" "));
+    }
     async_execute_file(&file_names, "cat");
 }
 
