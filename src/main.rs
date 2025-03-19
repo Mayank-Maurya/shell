@@ -191,7 +191,7 @@ fn change_directory_command(commands: Vec<&str>) {
 }
 
 fn echo_command(input: &str) {
-    print!("{}",input);
+    println!("{}",input[1..input.len()-2].to_string());
 }
 
 fn cat_command(input: &str) {
