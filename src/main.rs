@@ -194,7 +194,7 @@ fn echo_command(input: &str) {
     // print!("{}", input.to_string());
     if input[0..1].to_string() == "'" {
         let ans: Vec<&str> = input.split("'").collect();
-        println!("{}",ans.join(""));
+        println!("{}",ans[0..ans.len()-1].join(""));
     } else {
         let ans: Vec<&str> = input.split_whitespace().collect();
         println!("{}", ans.join(" "));
