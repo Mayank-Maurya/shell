@@ -23,10 +23,16 @@ fn main() {
         match split {
             Some(str) => {
                 command = str.0;
-                args = str.1;
+                println!("{}",str.1);
+                if !str.1.is_empty() {
+                    args = str.1;
+                } else {
+                    args = ""
+                }
             },
             None => {
-                panic!("An error occurred!");
+                command = input.trim();
+                args = "";
             }
         }
 
