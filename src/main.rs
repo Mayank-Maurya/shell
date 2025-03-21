@@ -194,7 +194,9 @@ fn echo_command(mut input: &str) {
     } else if input[0..1].to_string() == "\"" { 
         ans = input.split("\"").collect();
     } else {
-        ans= input.split_whitespace().collect();
+        ans = input.split_ascii_whitespace().collect();
+        println!("{}", ans.join(" "));
+        return
     }
     ans = remove_white_spaces(&ans);
     println!("{}", ans.join(""));
