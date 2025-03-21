@@ -187,6 +187,7 @@ fn change_directory_command(commands: Vec<&str>) {
 }
 
 fn echo_command(mut input: &str) {
+    
     input = input.trim();
     let mut ans: Vec<&str>;
     if input[0..1].to_string() == "'" {
