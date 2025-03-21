@@ -1,8 +1,12 @@
 use std::{env, fs::{self}};
 use std::io::{self, Write};
-use std::process::Command;
+
+mod utils;
+
+use utils::{async_execute_file, not_found_err, remove_white_spaces};
 
 const BUILT_IN_COMMANDS: [&str; 4] = ["echo", "exit", "type", "pwd"];
+
 fn main() {
     // define vars
     let stdin = io::stdin();
@@ -139,19 +143,6 @@ fn execute_files_command(commands: Vec<&str>) {
     }
 }
 
-fn async_execute_file(commands: &[&str], explicit_command: &str) {
-    let cmd;
-    if !explicit_command.is_empty() {
-        cmd = explicit_command;
-    } else {
-        cmd = commands[0];
-    }
-    let output = Command::new(cmd)
-        .args(commands[1..].iter())
-        .output();
-    io::stdout().write_all(&output.unwrap().stdout).unwrap();
-}
-
 fn exit_command(commands: Vec<&str>) -> bool {
     if commands.len() >=2 && commands[1] == "0" {
         return true
@@ -187,7 +178,6 @@ fn change_directory_command(commands: Vec<&str>) {
 }
 
 fn echo_command(mut input: &str) {
-    
     input = input.trim();
     let mut ans: Vec<&str>;
     if input[0..1].to_string() == "'" {
@@ -213,23 +203,4 @@ fn cat_command(input: &str) {
         file_names = input.split_whitespace().collect();
     }
     async_execute_file(&file_names, "cat");
-}
-
-fn remove_white_spaces<'a>(ans: &[&'a str]) -> Vec<&'a str> {
-    let mut result: Vec<&str> = [].to_vec();
-    for item in ans {
-        if item.len() == 0 {
-            continue;
-        }
-        let mut trim = item.trim();
-        if trim.len() == 0 {
-            trim = " ";
-        }
-        result.push(trim);
-    }
-    result
-}
-
-fn not_found_err(commands: Vec<&str>, start_index: usize) {
-    println!("{}: command not found ",commands[start_index..].join(" "));
 }
