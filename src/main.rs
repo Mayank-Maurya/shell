@@ -215,10 +215,14 @@ fn cat_command(input: &str) {
 fn remove_white_spaces<'a>(ans: &[&'a str]) -> Vec<&'a str> {
     let mut result: Vec<&str> = [].to_vec();
     for item in ans {
-        if item.len() > 0 {
-            
+        if item.len() == 0 {
+            continue;
         }
-        result.push(item.trim());
+        let mut trim = item.trim();
+        if trim.len() == 0 {
+            trim = " ";
+        }
+        result.push(trim);
     }
     result
 }
