@@ -33,11 +33,6 @@ fn main() {
 
         // // collect all args with command at args[0]
         let commands: Vec<&str> = input.split_ascii_whitespace().collect();
-        
-        // // check if there any command
-        // if commands.len() == 0 {
-        //     continue;
-        // }
 
         // check for type of commands
         match command {
@@ -191,17 +186,18 @@ fn change_directory_command(commands: Vec<&str>) {
     }
 }
 
-fn echo_command(input: &str) {
+fn echo_command(mut input: &str) {
+    input = input.trim();
+    let mut ans: Vec<&str>;
     if input[0..1].to_string() == "'" {
-        let ans: Vec<&str> = input.split("'").collect();
-        println!("{}",ans[0..ans.len()-1].join(""));
+        ans = input.split("'").collect();
     } else if input[0..1].to_string() == "\"" { 
-        let ans: Vec<&str> = input.split("\"").collect();
-        println!("{}",ans[0..ans.len()-1].join(""));
+        ans = input.split("\"").collect();
     } else {
-        let ans: Vec<&str> = input.split_whitespace().collect();
-        println!("{}", ans.join(" "));
+        ans= input.split_whitespace().collect();
     }
+    ans = remove_white_spaces(&ans);
+    println!("{}", ans.join(""));
 }
 
 fn cat_command(input: &str) {
@@ -214,6 +210,17 @@ fn cat_command(input: &str) {
         file_names = input.split_whitespace().collect();
     }
     async_execute_file(&file_names, "cat");
+}
+
+fn remove_white_spaces<'a>(ans: &[&'a str]) -> Vec<&'a str> {
+    let mut result: Vec<&str> = [].to_vec();
+    for item in ans {
+        if item.len() > 0 {
+            
+        }
+        result.push(item.trim());
+    }
+    result
 }
 
 fn not_found_err(commands: Vec<&str>, start_index: usize) {
